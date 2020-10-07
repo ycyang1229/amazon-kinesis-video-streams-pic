@@ -130,7 +130,9 @@ CleanUp:
 }
 
 /**
- * Transition the state machine given it's context
+ * @brief Transition the state machine given it's context. Advance the fsm.
+ * 
+ * @param[in]
  */
 STATUS stepStateMachine(PStateMachine pStateMachine)
 {
@@ -145,18 +147,20 @@ STATUS stepStateMachine(PStateMachine pStateMachine)
     customData = pStateMachineImpl->customData;
 
     // Get the next state
+    /** check it is possible to move to the next state. If possible, we will call the init function of the next state. */
     CHK(pStateMachineImpl->context.pCurrentState->getNextStateFn != NULL, STATUS_NULL_ARG);
     CHK_STATUS(pStateMachineImpl->context.pCurrentState->getNextStateFn(pStateMachineImpl->customData, &nextState));
 
     // Validate if the next state can accept the current state before transitioning
+    /** validate the next state. */
     CHK_STATUS(getStateMachineState(pStateMachine, nextState, &pState));
-
     CHK_STATUS(acceptStateMachineState((PStateMachine) pStateMachineImpl, pState->acceptStates));
 
     // Clear the iteration info if a different state and transition the state
     time = pStateMachineImpl->getCurrentTimeFunc(pStateMachineImpl->getCurrentTimeFuncCustomData);
 
     // Check if we are changing the state
+    /** retry counter check. */
     if (pState->state != pStateMachineImpl->context.pCurrentState->state) {
         // Clear the iteration data
         pStateMachineImpl->context.retryCount = 0;
@@ -174,10 +178,13 @@ STATUS stepStateMachine(PStateMachine pStateMachine)
             CHK(pStateMachineImpl->context.retryCount <= pState->retry, pState->status);
         }
     }
-
+    /** updat the state. */
     pStateMachineImpl->context.pCurrentState = pState;
 
     // Execute the state function if specified
+    /**
+     * execute the main functino of this fsm.
+    */
     if (pStateMachineImpl->context.pCurrentState->executeStateFn != NULL) {
         CHK_STATUS(pStateMachineImpl->context.pCurrentState->executeStateFn(pStateMachineImpl->customData,
                                                                             pStateMachineImpl->context.time));
@@ -232,7 +239,9 @@ CleanUp:
 }
 
 /**
- * Resets the state machine retry count
+ * @brief Resets the state machine retry count
+ * 
+ * @param[]
  */
 STATUS resetStateMachineRetryCount(PStateMachine pStateMachine)
 {
@@ -241,7 +250,7 @@ STATUS resetStateMachineRetryCount(PStateMachine pStateMachine)
     PStateMachineImpl pStateMachineImpl = (PStateMachineImpl) pStateMachine;
 
     CHK(pStateMachineImpl != NULL, STATUS_NULL_ARG);
-
+    DLOGD("R");
     // Reset the state
     pStateMachineImpl->context.retryCount = 0;
     pStateMachineImpl->context.time = 0;

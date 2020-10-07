@@ -33,7 +33,10 @@ STATUS stackQueueGetCount(PStackQueue pStackQueue, PUINT32 pCount)
 }
 
 /**
- * Whether the stack queue is empty
+ * @brief Whether the stack queue is empty
+ * 
+ * @param[in] 
+ * @param[out] pIsEmpty true:empty. 
  */
 STATUS stackQueueIsEmpty(PStackQueue pStackQueue, PBOOL pIsEmpty)
 {

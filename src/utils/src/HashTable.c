@@ -8,7 +8,11 @@ STATUS hashTableCreate(PHashTable* ppHashTable)
     return hashTableCreateWithParams(DEFAULT_HASH_TABLE_BUCKET_COUNT, DEFAULT_HASH_TABLE_BUCKET_LENGTH, ppHashTable);
 }
 /**
- * Create a new hash table with specific parameters
+ * @brief Create a new hash table with specific parameters
+ * 
+ * @param[in] bucketCount the number of buckets.
+ * @param[in] bucketLength the number of elements per bucket.
+ * @param[out] ppHashTable 
  */
 STATUS hashTableCreateWithParams(UINT32 bucketCount, UINT32 bucketLength, PHashTable* ppHashTable)
 {
@@ -256,7 +260,11 @@ CleanUp:
 }
 
 /**
- * Upserts an item into the hash table
+ * @brief Upserts an item into the hash table. insert or update key/value pair in the hash table.
+ * 
+ * @param[]
+ * @param[]
+ * @param[]
  */
 STATUS hashTableUpsert(PHashTable pHashTable, UINT64 key, UINT64 value)
 {
@@ -409,7 +417,11 @@ CleanUp:
 }
 
 /**
- * Gets all the entries from the hash table
+ * @brief Gets all the entries from the hash table
+ * 
+ * @param[in] pHashTable 
+ * @param[in] callerData 
+ * @param[in] hashEntryFn the callback of processing each elements.
  */
 STATUS hashTableIterateEntries(PHashTable pHashTable, UINT64 callerData, HashEntryCallbackFunc hashEntryFn)
 {

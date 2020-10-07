@@ -49,8 +49,26 @@ CleanUp:
     LEAVES();
     return retStatus;
 }
-
-STATUS timerQueueAddTimer(TIMER_QUEUE_HANDLE handle, UINT64 start, UINT64 period, TimerCallbackFunc timerCallbackFn, UINT64 customData, PUINT32 pIndex)
+/*
+ * Add timer to the timer queue.
+ *
+ * NOTE: The timer period value of TIMER_QUEUE_SINGLE_INVOCATION_PERIOD will schedule the call only once
+ *
+ * @param - TIMER_QUEUE_HANDLE - IN - Timer queue handle
+ * @param - UINT64 - IN - Start duration in 100ns at which to start the first time
+ * @param - UINT64 - IN - Timer period value in 100ns to schedule the callback
+ * @param - TimerCallbackFunc - IN - Callback to call for the timer
+ * @param - UINT64 - IN - Timer callback function custom data
+ * @param - PUINT32 - IN - Created timers ID
+ *
+ * @return - STATUS code of the execution
+ */
+STATUS timerQueueAddTimer(TIMER_QUEUE_HANDLE handle,
+                          UINT64 start,
+                          UINT64 period,
+                          TimerCallbackFunc timerCallbackFn,
+                          UINT64 customData,
+                          PUINT32 pIndex)
 {
     ENTERS();
     STATUS retStatus = STATUS_SUCCESS;
