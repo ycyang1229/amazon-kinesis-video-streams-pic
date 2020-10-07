@@ -491,8 +491,8 @@ typedef CID*                PCID;
 #include <dirent.h>
 #include <sys/time.h>
 
-#define KVSPIC_OS_VERSION "non-windows/unknown"
-#define KVSPIC_PLATFORM_NAME "unknownArch"
+#define KVSPIC_OS_VERSION "freertos/freertos"
+#define KVSPIC_PLATFORM_NAME "esp32"
 #ifdef KVSPIC_HAVE_UTSNAME_H
 #include <sys/utsname.h>
 #endif

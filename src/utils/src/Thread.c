@@ -191,7 +191,7 @@ PUBLIC_API STATUS defaultCreateThread(PTID pThreadId, startRoutine start, PVOID 
         uint32_t spiSize = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
         uint32_t internalSize = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
         uint32_t defaultSize = heap_caps_get_free_size(MALLOC_CAP_DEFAULT);
-        DLOGD("totalSize:%d, spiSize:%d, internalSize:%d, defaultSize:%d before pthread\n", totalSize, spiSize, internalSize, defaultSize);
+        DLOGD("totalSize:%d, spiSize:%d, internalSize:%d, defaultSize:%d before pthread", totalSize, spiSize, internalSize, defaultSize);
     }
 #endif
     //usleep(2000);
@@ -209,7 +209,7 @@ PUBLIC_API STATUS defaultCreateThread(PTID pThreadId, startRoutine start, PVOID 
         uint32_t spiSize = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
         uint32_t internalSize = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
         uint32_t defaultSize = heap_caps_get_free_size(MALLOC_CAP_DEFAULT);
-        DLOGD("totalSize:%d, spiSize:%d, internalSize:%d, defaultSize:%d after pthread\n", totalSize, spiSize, internalSize, defaultSize);
+        DLOGD("totalSize:%d, spiSize:%d, internalSize:%d, defaultSize:%d after pthread", totalSize, spiSize, internalSize, defaultSize);
     }
 #endif
     switch (result) {
