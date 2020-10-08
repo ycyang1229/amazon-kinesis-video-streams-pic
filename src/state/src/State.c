@@ -250,7 +250,6 @@ STATUS resetStateMachineRetryCount(PStateMachine pStateMachine)
     PStateMachineImpl pStateMachineImpl = (PStateMachineImpl) pStateMachine;
 
     CHK(pStateMachineImpl != NULL, STATUS_NULL_ARG);
-    DLOGD("R");
     // Reset the state
     pStateMachineImpl->context.retryCount = 0;
     pStateMachineImpl->context.time = 0;
