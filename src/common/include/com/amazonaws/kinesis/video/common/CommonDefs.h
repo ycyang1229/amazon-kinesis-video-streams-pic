@@ -119,7 +119,7 @@ extern "C" {
 
     typedef char                    CHAR;
     #ifndef WCHAR
-    typedef uint16_t                   WCHAR;
+    typedef unsigned short          WCHAR;
     #endif
     typedef uint8_t                 UINT8;
     typedef int8_t                  INT8;
