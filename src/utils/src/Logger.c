@@ -56,19 +56,20 @@ VOID addLogMetadata(PCHAR buffer, UINT32 bufferLen, PCHAR fmt, UINT32 logLevel)
 //
 VOID defaultLogPrint(UINT32 level, PCHAR tag, PCHAR fmt, ...)
 {
-    CHAR logFmtString[MAX_LOG_FORMAT_LENGTH + 1];
+    PCHAR logFmtString = MEMALLOC(MAX_LOG_FORMAT_LENGTH + 1);
     UINT32 logLevel = GET_LOGGER_LOG_LEVEL();
 
     UNUSED_PARAM(tag);
 
     if (level >= logLevel) {
-        addLogMetadata(logFmtString, (UINT32) ARRAY_SIZE(logFmtString), fmt, level);
+        addLogMetadata(logFmtString, (UINT32) MAX_LOG_FORMAT_LENGTH + 1, fmt, level);
 
         va_list valist;
         va_start(valist, fmt);
         vprintf(logFmtString, valist);
         va_end(valist);
     }
+    MEMFREE(logFmtString);
 }
 
 VOID loggerSetLogLevel(UINT32 targetLoggerLevel)
