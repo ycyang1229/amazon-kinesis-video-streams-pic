@@ -29,7 +29,7 @@ VOID addLogMetadata(PCHAR buffer, UINT32 bufferLen, PCHAR fmt, UINT32 logLevel)
     CHAR timeString[MAX_TIMESTAMP_FORMAT_STR_LEN + 1 + 1];
     STATUS retStatus = STATUS_SUCCESS;
     UINT32 offset = 0;
-
+#if 0
 #ifdef ENABLE_LOG_THREAD_ID
     // MAX_THREAD_ID_STR_LEN + null
     CHAR tidString[MAX_THREAD_ID_STR_LEN + 1];
@@ -47,6 +47,7 @@ VOID addLogMetadata(PCHAR buffer, UINT32 bufferLen, PCHAR fmt, UINT32 logLevel)
     offset = (UINT32) SNPRINTF(buffer, bufferLen, "%s%-*s ", timeString, MAX_LOG_LEVEL_STRLEN, getLogLevelStr(logLevel));
 #ifdef ENABLE_LOG_THREAD_ID
     offset += SNPRINTF(buffer + offset, bufferLen - offset, "%s ", tidString);
+#endif
 #endif
     SNPRINTF(buffer + offset, bufferLen - offset, "%s\n", fmt);
 }
