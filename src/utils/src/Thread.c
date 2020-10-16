@@ -120,9 +120,17 @@ CleanUp:
 
 #else
 
+
+
+UINT32 totalNum = 0;
+UINT32 successNum = 0;
+
+UINT32 totalDetachNum = 0;
+UINT32 successDetachNum = 0;
+
 PUBLIC_API STATUS defaultGetThreadName(TID thread, PCHAR name, UINT32 len)
 {
-    UINT32 retValue;
+    UINT32 retValue = STATUS_SUCCESS;
 
     if (NULL == name) {
         return STATUS_NULL_ARG;
@@ -136,10 +144,14 @@ PUBLIC_API STATUS defaultGetThreadName(TID thread, PCHAR name, UINT32 len)
     retValue = pthread_getname_np((pthread_t) thread, name, len);
 #elif defined ANDROID_BUILD
     // This will return the current thread name on Android
+    #ifdef KVSPIC_HAVE_SYS_PRCTL_H
     retValue = prctl(PR_GET_NAME, (UINT64) name, 0, 0, 0);
+    #endif
 #else
     // TODO need to handle case when other platform use old verison GLIBC and don't support prctl
+    #ifdef KVSPIC_HAVE_SYS_PRCTL_H
     retValue = prctl(PR_GET_NAME, (UINT64) name, 0, 0, 0);
+    #endif
 #endif
 
     return (0 == retValue) ? STATUS_SUCCESS : STATUS_INVALID_OPERATION;
@@ -156,8 +168,10 @@ PUBLIC_API STATUS defaultCreateThread(PTID pThreadId, startRoutine start, PVOID 
     pthread_t threadId;
     INT32 result;
     pthread_attr_t *pAttr = NULL;
-
+    pthread_attr_t attr;
+    pAttr = &attr;
     CHK(pThreadId != NULL, STATUS_NULL_ARG);
+    result = pthread_attr_init(pAttr);
 
 #ifdef CONSTRAINED_DEVICE
     pthread_attr_t attr;
@@ -167,8 +181,37 @@ PUBLIC_API STATUS defaultCreateThread(PTID pThreadId, startRoutine start, PVOID 
     result = pthread_attr_setstacksize(&attr, THREAD_STACK_SIZE_ON_CONSTRAINED_DEVICE);
     CHK_ERR(result == 0, STATUS_THREAD_ATTR_SET_STACK_SIZE_FAILED, "pthread_attr_setstacksize failed with %d", result);
 #endif
-
+#if 1
+    {
+        #include "esp_heap_caps.h"
+        #include "esp_system.h"
+        extern uint32_t esp_get_free_heap_size( void );
+        extern size_t heap_caps_get_free_size( uint32_t caps );
+        uint32_t totalSize = esp_get_free_heap_size();
+        uint32_t spiSize = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
+        uint32_t internalSize = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+        uint32_t defaultSize = heap_caps_get_free_size(MALLOC_CAP_DEFAULT);
+        DLOGD("totalSize:%d, spiSize:%d, internalSize:%d, defaultSize:%d before pthread", totalSize, spiSize, internalSize, defaultSize);
+    }
+#endif
+    //usleep(2000);
+    pthread_attr_setdetachstate(pAttr, PTHREAD_CREATE_DETACHED);
+    //pthread_attr_setstacksize(pAttr, 15360);
     result = pthread_create(&threadId, pAttr, start, args);
+#if 1
+    {
+
+        #include "esp_heap_caps.h"
+        #include "esp_system.h"
+        extern uint32_t esp_get_free_heap_size( void );
+        extern size_t heap_caps_get_free_size( uint32_t caps );
+        uint32_t totalSize = esp_get_free_heap_size();
+        uint32_t spiSize = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
+        uint32_t internalSize = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+        uint32_t defaultSize = heap_caps_get_free_size(MALLOC_CAP_DEFAULT);
+        DLOGD("totalSize:%d, spiSize:%d, internalSize:%d, defaultSize:%d after pthread", totalSize, spiSize, internalSize, defaultSize);
+    }
+#endif
     switch (result) {
     case 0:
         // Successful case
@@ -185,9 +228,10 @@ PUBLIC_API STATUS defaultCreateThread(PTID pThreadId, startRoutine start, PVOID 
     }
 
     *pThreadId = (TID)threadId;
-
+    successNum++;
 CleanUp:
-
+    totalNum++;
+    DLOGD("pthread_create(%d/%d)", successNum, totalNum);
     if (pAttr != NULL) {
         result = pthread_attr_destroy(pAttr);
         if (result != 0) {
@@ -297,6 +341,7 @@ CleanUp:
 PUBLIC_API STATUS defaultDetachThread(TID threadId)
 {
     STATUS retStatus = STATUS_SUCCESS;
+    return retStatus;
     INT32 detachResult = pthread_detach((pthread_t) threadId);
 
     switch (detachResult) {
@@ -312,7 +357,10 @@ PUBLIC_API STATUS defaultDetachThread(TID threadId)
             CHK(FALSE, STATUS_DETACH_THREAD_FAILED);
     }
 
+    successDetachNum++;
 CleanUp:
+    totalDetachNum++;
+    DLOGD("pthread_detach(%d/%d)", successDetachNum, totalDetachNum);
     return retStatus;
 }
 

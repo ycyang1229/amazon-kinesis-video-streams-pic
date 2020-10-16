@@ -1,5 +1,7 @@
 #include "Include_i.h"
 
+#ifdef KVCPIC_HAVE_DLFCN_H
+
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 
 //
@@ -65,4 +67,5 @@ dlClose globalDlClose = defaultDlClose;
 dlSym globalDlSym = defaultDlSym;
 dlError globalDlError = defaultDlError;
 
+#endif
 #endif
