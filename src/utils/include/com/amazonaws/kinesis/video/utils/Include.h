@@ -16,7 +16,7 @@ extern "C" {
 #define MAX_STRING_CONVERSION_BASE          36
 
 // Max path characters as defined in linux/limits.h
-#define MAX_PATH_LEN                        4096
+#define MAX_PATH_LEN                        256
 
 // thread stack size to use when running on constrained device like raspberry pi
 #define THREAD_STACK_SIZE_ON_CONSTRAINED_DEVICE     (512 * 1024)
@@ -1062,7 +1062,7 @@ PUBLIC_API UINT32 updateCrc32(UINT32, PBYTE, UINT32);
 /**
  * Default timer queue max timer count
  */
-#define DEFAULT_TIMER_QUEUE_TIMER_COUNT                             32
+#define DEFAULT_TIMER_QUEUE_TIMER_COUNT                             8
 
 /**
  * Sentinel value to specify no periodic invocation
