@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
 include(Utilities)
+include(CheckIncludeFiles)
 project(pic_project)
 
 # User Flags
-option(BUILD_DEPENDENCIES "Whether or not to build depending libraries from source" ON)
+option(BUILD_DEPENDENCIES "Whether or not to build depending libraries from source" OFF)
 
 # Developer Flags
 option(BUILD_TEST "Build the testing tree." OFF)
@@ -17,6 +18,22 @@ option(UNDEFINED_BEHAVIOR_SANITIZER "Build with UndefinedBehaviorSanitizer." OFF
 option(BUILD_DEBUG_HEAP "Build debug heap with guard bands and validation." OFF)
 option(ALIGNED_MEMORY_MODEL "Aligned memory model ONLY." OFF)
 option(FIXUP_ANNEX_B_TRAILING_NALU_ZERO "Fix-up some bad encoder behavior leaving a trailing zero at the end of NALu" OFF)
+option(BUILD_KVSPIC "Build the sample code." OFF)
+option(BUILD_KVSPIC_CLIENT "Build the sample code." OFF)
+
+
+CHECK_INCLUDE_FILES(sys/prctl.h   KVSPIC_HAVE_SYS_PRCTL_H)
+if(KVSPIC_HAVE_SYS_PRCTL_H)
+  add_definitions(-DKVSPIC_HAVE_SYS_PRCTL_H)
+endif()
+CHECK_INCLUDE_FILES(sys/utsname.h KVSPIC_HAVE_UTSNAME_H)
+if(KVSPIC_HAVE_UTSNAME_H)
+  add_definitions(-DKVSPIC_HAVE_UTSNAME_H)
+endif()
+CHECK_INCLUDE_FILES(dlfcn.h       KVCPIC_HAVE_DLFCN_H)
+if(KVCPIC_HAVE_DLFCN_H)
+  add_definitions(-DKVCPIC_HAVE_DLFCN_H)
+endif()
 
 if(CODE_COVERAGE)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g -fprofile-arcs -ftest-coverage")
@@ -99,32 +116,64 @@ file(GLOB PIC_HEADERS "${KINESIS_VIDEO_PIC_SRC}/src/*/include")
 include_directories(${PIC_HEADERS})
 include_directories(${KINESIS_VIDEO_PIC_SRC})
 
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/libkvspic.pc.cmake"
-  "${CMAKE_CURRENT_BINARY_DIR}/libkvspic.pc" @ONLY)
+if(BUILD_KVSPIC)
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/libkvspic.pc.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/libkvspic.pc" @ONLY)
 
-add_library(
-  kvspic STATIC
-  ${PIC_CLIENT_SOURCE_FILES}
-  ${PIC_DURATION_SOURCE_FILES}
-  ${PIC_HEAP_SOURCE_FILES}
-  ${PIC_MKVGEN_SOURCE_FILES}
-  ${PIC_STATE_SOURCE_FILES}
-  ${PIC_TRACE_SOURCE_FILES}
-  ${PIC_UTILS_SOURCE_FILES}
-  ${PIC_VIEW_SOURCE_FILES})
-target_link_libraries(kvspic ${CMAKE_DL_LIBS} Threads::Threads)
-if(UNIX AND NOT APPLE)
-  # rt needed for clock_gettime
-  target_link_libraries(kvspic rt)
+  add_library(
+    kvspic STATIC
+    ${PIC_CLIENT_SOURCE_FILES}
+    ${PIC_DURATION_SOURCE_FILES}
+    ${PIC_HEAP_SOURCE_FILES}
+    ${PIC_MKVGEN_SOURCE_FILES}
+    ${PIC_STATE_SOURCE_FILES}
+    ${PIC_TRACE_SOURCE_FILES}
+    ${PIC_UTILS_SOURCE_FILES}
+    ${PIC_VIEW_SOURCE_FILES})
+  target_link_libraries(kvspic ${CMAKE_THREAD_LIBS_INIT})
+  if(KVCPIC_HAVE_DLFCN_H)
+  target_link_libraries(kvspic ${CMAKE_DL_LIBS})
+  endif()
+
+  if(UNIX AND NOT APPLE)
+    # rt needed for clock_gettime
+    target_link_libraries(kvspic rt)
+  endif()
+
+  install(
+    TARGETS kvspic
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin)
+
+  install(
+      FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/libkvspic.pc
+      DESTINATION lib/pkgconfig)
 endif()
 
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/libkvspicClient.pc.cmake"
-  "${CMAKE_CURRENT_BINARY_DIR}/libkvspicClient.pc" @ONLY)
+if(BUILD_KVSPIC_CLIENT)
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/libkvspicClient.pc.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/libkvspicClient.pc" @ONLY)
 
-add_library(kvspicClient STATIC ${PIC_CLIENT_SOURCE_FILES})
-target_link_libraries(kvspicClient)
+  add_library(kvspicClient STATIC ${PIC_CLIENT_SOURCE_FILES})
+  target_link_libraries(kvspicClient)
+
+  install(
+    TARGETS kvspicClient
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin)
+
+
+  install(
+      FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/libkvspicClient.pc
+      DESTINATION lib/pkgconfig)
+endif()
+
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/libkvspicState.pc.cmake"
@@ -138,14 +187,18 @@ configure_file(
   "${CMAKE_CURRENT_BINARY_DIR}/libkvspicUtils.pc" @ONLY)
 
 add_library(kvspicUtils STATIC ${PIC_UTILS_SOURCE_FILES})
-target_link_libraries(kvspicUtils ${CMAKE_DL_LIBS} Threads::Threads)
+
+target_link_libraries(kvspicUtils ${CMAKE_THREAD_LIBS_INIT})
+if(KVCPIC_HAVE_DLFCN_H)
+  target_link_libraries(kvspicUtils ${CMAKE_DL_LIBS})
+endif()
 if(UNIX AND NOT APPLE)
   # rt needed for clock_gettime
   target_link_libraries(kvspicUtils rt)
 endif()
 
 install(
-  TARGETS kvspic kvspicClient kvspicState kvspicUtils
+  TARGETS kvspicUtils kvspicState
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
@@ -156,8 +209,6 @@ install(
 
 install(
   FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/libkvspic.pc
-    ${CMAKE_CURRENT_BINARY_DIR}/libkvspicClient.pc
     ${CMAKE_CURRENT_BINARY_DIR}/libkvspicState.pc
     ${CMAKE_CURRENT_BINARY_DIR}/libkvspicUtils.pc
   DESTINATION lib/pkgconfig)
@@ -186,7 +237,11 @@ if(BUILD_TEST)
           ${PIC_UTILS_SOURCE_FILES}
           ${PIC_VIEW_SOURCE_FILES})
   target_compile_definitions(kvspic_test PRIVATE ALIGNED_MEMORY_MODEL=TRUE FIXUP_ANNEX_B_TRAILING_NALU_ZERO=TRUE)
-  target_link_libraries(kvspic_test ${GTEST_LIBNAME} ${CMAKE_DL_LIBS} Threads::Threads)
+
+  target_link_libraries(kvspic_test ${GTEST_LIBNAME} ${CMAKE_THREAD_LIBS_INIT})
+  if(KVCPIC_HAVE_DLFCN_H)
+  target_link_libraries(kvspic_test ${CMAKE_DL_LIBS})
+  endif()
   if(UNIX AND NOT APPLE)
     # rt needed for clock_gettime
     target_link_libraries(kvspic_test rt)
