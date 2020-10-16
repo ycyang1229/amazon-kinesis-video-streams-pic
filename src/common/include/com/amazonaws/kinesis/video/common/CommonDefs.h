@@ -118,12 +118,16 @@ extern "C" {
     #include <stdint.h>
 
     typedef char                    CHAR;
-    typedef short                   WCHAR;
+    #ifndef WCHAR
+    typedef unsigned short          WCHAR;
+    #endif
     typedef uint8_t                 UINT8;
     typedef int8_t                  INT8;
     typedef uint16_t                UINT16;
     typedef int16_t                 INT16;
+    #ifndef UINT32
     typedef uint32_t                UINT32;
+    #endif
     typedef int32_t                 INT32;
     typedef uint64_t                UINT64;
     typedef int64_t                 INT64;
@@ -432,7 +436,9 @@ typedef CID*                PCID;
 ////////////////////////////////////////////////////
 // Status definitions
 ////////////////////////////////////////////////////
+#ifndef STATUS
 #define STATUS UINT32
+#endif
 
 #define STATUS_SUCCESS    ((STATUS) 0x00000000)
 
@@ -484,7 +490,12 @@ typedef CID*                PCID;
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/time.h>
+
+#define KVSPIC_OS_VERSION "freertos/freertos"
+#define KVSPIC_PLATFORM_NAME "esp32"
+#ifdef KVSPIC_HAVE_UTSNAME_H
 #include <sys/utsname.h>
+#endif
 #endif
 
 #if !defined(_MSC_VER) && !defined(__MINGW64__) && !defined(__MINGW32__) && !defined (__MACH__)
@@ -538,10 +549,14 @@ typedef CID*                PCID;
 
 #else
 
+#ifdef KVCPIC_HAVE_DLFCN_H
 #include <dlfcn.h>
+#endif
 
 #if !defined (__MACH__)
+#ifdef KVSPIC_HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
+#endif
 #endif
 
 // Definition of the mkdir for non-Windows platforms with 2 params
@@ -606,6 +621,8 @@ extern memFree globalMemFree;
 
 extern memChk globalMemChk;
 
+
+#ifdef KVCPIC_HAVE_DLFCN_H
 //
 // Dynamic library loading function definitions
 //
@@ -629,7 +646,7 @@ extern dlOpen globalDlOpen;
 extern dlClose globalDlClose;
 extern dlSym globalDlSym;
 extern dlError globalDlError;
-
+#endif
 //
 // Thread library function definitions
 //
@@ -770,9 +787,13 @@ extern PUBLIC_API atomicXor globalAtomicXor;
 #define MEMREALLOC                 globalMemRealloc
 #define MEMFREE                    globalMemFree
 #define MEMCMP                     memcmp
+#ifndef MEMCPY
 #define MEMCPY                     memcpy
+#endif
 #define MEMSET                     memset
+#ifndef MEMMOVE
 #define MEMMOVE                    memmove
+#endif
 #define REALLOC                    realloc
 
 //
