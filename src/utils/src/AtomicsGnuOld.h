@@ -24,8 +24,8 @@ extern "C" {
 
 static inline VOID atomicFullBarrier()
 {
-    __sync_synchronize();
-    __asm__ __volatile__("" : : : "memory");
+    //__sync_synchronize();////////////////////////////////////////
+    //__asm__ __volatile__("" : : : "memory");/////////////////////  not support
 }
 
 static inline SIZE_T defaultAtomicLoad(volatile SIZE_T* pAtomic)

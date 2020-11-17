@@ -172,7 +172,13 @@ CleanUp:
 
 // Definition of the static global mutexes
 pthread_mutex_t globalKvsReentrantMutex = GLOBAL_MUTEX_INIT_RECURSIVE;
-pthread_mutex_t globalKvsNonReentrantMutex = GLOBAL_MUTEX_INIT;
+//pthread_mutex_t globalKvsNonReentrantMutex = GLOBAL_MUTEX_INIT;
+pthread_mutex_t globalKvsNonReentrantMutex = {   //////////////////////////////////////// by Kevin
+            .xIsInitialized = ( BaseType_t )0,
+            .xMutex = { { 0 } },
+            .xTaskOwner = NULL,
+            .xAttr = { .iType = 0 }
+        };
 
 MUTEX defaultCreateMutex(BOOL reentrant)
 {
@@ -218,12 +224,19 @@ VOID defaultFreeMutex(MUTEX mutex)
     pthread_mutex_destroy(pMutex);
 
     // De-allocate the memory if it's not a well-known mutex - aka if we had allocated it previously
-    if (pMutex != &globalKvsReentrantMutex && pMutex != &globalKvsNonReentrantMutex) {
+    if (pMutex != &globalKvsReentrantMutex && pMutex != &globalKvsNonReentrantMutex) { 
         MEMFREE(pMutex);
     }
 }
 
-pthread_cond_t globalKvsConditionVariable = PTHREAD_COND_INITIALIZER;
+
+//pthread_cond_t globalKvsConditionVariable = PTHREAD_COND_INITIALIZER;
+pthread_cond_t globalKvsConditionVariable = {    //////////////////////////////////////// by Kevin
+            .xIsInitialized = pdFALSE,      
+            .xCondMutex = { { 0 } },        
+            .xCondWaitSemaphore = { { 0 } },
+            .iWaitingThreads = 0            
+        };
 
 CVAR defaultConditionVariableCreate()
 {

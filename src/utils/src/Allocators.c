@@ -17,7 +17,7 @@ PVOID defaultMemAlignAlloc(SIZE_T size, SIZE_T alignment)
 #elif defined(_MSC_VER) || defined(__MINGW64__) || defined(__MINGW32__)
     return _aligned_malloc(size, alignment);
 #else
-    return memalign(size, alignment);
+    return (PVOID)memalign(size, alignment);
 #endif
 }
 

@@ -11,6 +11,12 @@
 extern "C" {
 #endif
 
+/////////////////////////////////////////////////////////// Test "include" Add by Kevin
+#include "basic_types.h"
+#include "integer.h"
+//////////////////////////////////////////////////////////  
+  
+  
 ////////////////////////////////////////////////////
 // Project defines
 ////////////////////////////////////////////////////
@@ -45,6 +51,7 @@ extern "C" {
         #define PACKED              __attribute__((__packed__))
         #define DISCARDABLE
     #else
+        #define INLINE              inline
         #define LIB_EXPORT
         #define LIB_IMPORT
         #define LIB_INTERNAL
@@ -138,7 +145,7 @@ extern "C" {
 #else
 
 typedef char                    CHAR;
-typedef short                   WCHAR;
+//typedef short                   WCHAR; /////////////////////////////////Test
 typedef unsigned char           UINT8;
 typedef char                    INT8;
 typedef unsigned short          UINT16;
@@ -174,7 +181,7 @@ typedef float                   FLOAT;
         #endif
     #endif
 #else
-    typedef INT32                BOOL;
+//    typedef INT32                BOOL;  /////////////////////////////////Test
 #endif
 
 typedef UINT8                BYTE;
@@ -192,7 +199,8 @@ typedef UINT32*              PUINT32;
 typedef INT64*               PINT64;
 typedef UINT64*              PUINT64;
 typedef long                 LONG, *PLONG;
-typedef unsigned long        ULONG, *PULONG;
+// typedef unsigned long        ULONG, *PULONG;  /////////////////////////////////Test
+typedef ULONG*               PULONG; 
 typedef DOUBLE*              PDOUBLE;
 typedef LDOUBLE*             PLDOUBLE;
 typedef FLOAT*               PFLOAT;
@@ -232,7 +240,8 @@ typedef UINT64              MUTEX;
 #if defined __WINDOWS_BUILD__
 typedef PCONDITION_VARIABLE CVAR;
 #else
-#include <pthread.h>
+#include <FreeRTOS_POSIX.h>  // this sould be included before including <pthread.h>. It contains the configuration of the Realtek platform.
+#include <FreeRTOS_POSIX/pthread.h>
 #include <signal.h>
 typedef pthread_cond_t* CVAR;
 #endif
@@ -262,6 +271,7 @@ typedef CID*                PCID;
 //
 // int and long ptr definitions
 //
+#define SIZE_32
 #if defined SIZE_64
     typedef INT64                INT_PTR, *PINT_PTR;
     typedef UINT64               UINT_PTR, *PUINT_PTR;
@@ -326,8 +336,10 @@ typedef CID*                PCID;
         typedef ULONG_PTR SIZE_T, *PSIZE_T;
         typedef LONG_PTR SSIZE_T, *PSSIZE_T;
     #elif !(defined _WIN32 || defined _WIN64)
-        typedef UINT_PTR SIZE_T, *PSIZE_T;
-        typedef INT_PTR SSIZE_T, *PSSIZE_T;
+//        typedef UINT_PTR SIZE_T, *PSIZE_T;  /////////////////////////////////Test
+        typedef SIZE_T*   PSIZE_T;  /////////////////////////////////Test
+//        typedef INT_PTR SSIZE_T, *PSSIZE_T;  /////////////////////////////////Test
+        typedef SSIZE_T*  PSSIZE_T;  /////////////////////////////////Test
     #endif
     #define _SIZE_T_DEFINED_IN_COMMON
 #endif
@@ -481,26 +493,27 @@ typedef CID*                PCID;
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <sys/stat.h>
-#include <errno.h>
+//#include <sys/stat.h>//////////////////////////////
+#include <FreeRTOS_POSIX/errno.h>
 #include <ctype.h>
 #include <time.h>
 
 #if !(defined _WIN32 || defined _WIN64)
-#include <unistd.h>
-#include <dirent.h>
-#include <sys/time.h>
+#include <FreeRTOS_POSIX/unistd.h>  ///sys
+//#include <dirent.h>  /////////////////////////////
+#include <time.h>
 
 #define KVSPIC_OS_VERSION "freertos/freertos"
 #define KVSPIC_PLATFORM_NAME "esp32"
 #ifdef KVSPIC_HAVE_UTSNAME_H
 #include <sys/utsname.h>
 #endif
+
 #endif
 
 #if !defined(_MSC_VER) && !defined(__MINGW64__) && !defined(__MINGW32__) && !defined (__MACH__)
 // NOTE!!! For some reason memalign is not included for Linux builds in stdlib.h
-#include <malloc.h>
+//#include <malloc.h>  //////////////////////////
 #endif
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
@@ -555,7 +568,7 @@ typedef CID*                PCID;
 
 #if !defined (__MACH__)
 #ifdef KVSPIC_HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
+#include <FreeRTOS_POSIX/sys/prctl.h>  /////////////////////////////////////////////////////
 #endif
 #endif
 
@@ -620,7 +633,6 @@ extern memRealloc globalMemRealloc;
 extern memFree globalMemFree;
 
 extern memChk globalMemChk;
-
 
 #ifdef KVCPIC_HAVE_DLFCN_H
 //

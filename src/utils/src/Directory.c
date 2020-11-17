@@ -1,4 +1,5 @@
 #include "Include_i.h"
+#include "fatfs_wrap.h" //////////////////// add by Kevin
 
 /**
  * Removes the directory - empty or not.
