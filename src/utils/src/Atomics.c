@@ -7,20 +7,21 @@ extern "C" {
 
 #include "Include_i.h"
 
-/*#define __GNUC__ 5 /////////////////////////////////////
-#if defined(__GNUC__) || defined(__clang__)
-#    if defined(__ATOMIC_RELAXED)
-#        include "AtomicsGnu.h"
-#    else
-#        include "AtomicsGnuOld.h"
-#    endif /* __ATOMIC_RELAXED */
-/*#elif defined(_MSC_VER)
-#    include "AtomicsMsvc.h"
-#else
-#    error No atomics implementation for your compiler is available
-#endif
-#undef __GNUC__*/
-#include "AtomicsGnuOld.h"
+
+//#if defined(__GNUC__) || defined(__clang__)
+//#    if defined(__ATOMIC_RELAXED)
+//#        include "AtomicsGnu.h"
+//#    else
+//#        include "AtomicsGnuOld.h"
+//#    endif /* __ATOMIC_RELAXED */
+//#elif defined(_MSC_VER)
+//#    include "AtomicsMsvc.h"
+//#else
+//#    error No atomics implementation for your compiler is available
+//#endif
+//#undef __GNUC__
+//#include "AtomicsGnuOld.h"
+#include "AtomicsGnu.h"
 
 PUBLIC_API atomicLoad globalAtomicLoad = defaultAtomicLoad;
 PUBLIC_API atomicStore globalAtomicStore = defaultAtomicStore;
