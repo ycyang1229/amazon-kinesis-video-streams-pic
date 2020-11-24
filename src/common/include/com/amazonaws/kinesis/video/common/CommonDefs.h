@@ -493,7 +493,7 @@ typedef CID*                PCID;
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
-//#include <sys/stat.h>//////////////////////////////
+#include <sys/stat.h>////////////////////////////// 
 #include <FreeRTOS_POSIX/errno.h>
 #include <ctype.h>
 #include <time.h>
