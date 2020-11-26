@@ -196,7 +196,7 @@ PUBLIC_API STATUS defaultCreateThread(PTID pThreadId, startRoutine start, PVOID 
 #endif
     //usleep(2000);
     pthread_attr_setdetachstate(pAttr, PTHREAD_CREATE_DETACHED);
-    //pthread_attr_setstacksize(pAttr, 15360);
+    pthread_attr_setstacksize(pAttr, 20*1024);
     result = pthread_create(&threadId, pAttr, start, args);
 #if 0
     {
@@ -238,6 +238,7 @@ CleanUp:
             DLOGW("pthread_attr_destroy failed with %u", result);
         }
     }
+    CHK_LOG_ERR(retStatus);
 
     return retStatus;
 }

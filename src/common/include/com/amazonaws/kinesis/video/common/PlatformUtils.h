@@ -60,32 +60,36 @@ extern logPrintFunc globalCustomLogPrintFn;
 
 // Extra logging macros
 #ifndef DLOGE
-//#define DLOGE(fmt, ...) __LOG(LOG_LEVEL_ERROR, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
-#define DLOGE(fmt, ...) __LOG(LOG_LEVEL_ERROR, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
+#define DLOGE(fmt, ...) __LOG(LOG_LEVEL_ERROR, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+//#define DLOGE(fmt, ...) __LOG(LOG_LEVEL_ERROR, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
 #endif
 #ifndef DLOGW
-#define DLOGW(fmt, ...) __LOG(LOG_LEVEL_WARN, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
+#define DLOGW(fmt, ...) __LOG(LOG_LEVEL_WARN, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+//#define DLOGW(fmt, ...) __LOG(LOG_LEVEL_WARN, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
 #endif
 #ifndef DLOGI
-#define DLOGI(fmt, ...) __LOG(LOG_LEVEL_INFO, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
+#define DLOGI(fmt, ...) __LOG(LOG_LEVEL_INFO, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+//#define DLOGI(fmt, ...) __LOG(LOG_LEVEL_INFO, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
 #endif
 #ifndef DLOGD
-#define DLOGD(fmt, ...) __LOG(LOG_LEVEL_DEBUG, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
+#define DLOGD(fmt, ...) __LOG(LOG_LEVEL_DEBUG, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+//#define DLOGD(fmt, ...) __LOG(LOG_LEVEL_DEBUG, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
 #endif
 #ifndef DLOGV
-#define DLOGV(fmt, ...) __LOG(LOG_LEVEL_VERBOSE, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
+#define DLOGV(fmt, ...) __LOG(LOG_LEVEL_VERBOSE, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+//#define DLOGV(fmt, ...) __LOG(LOG_LEVEL_VERBOSE, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
 #endif
 #ifndef ENTER
-#define ENTER() DLOGV("Enter")
+#define ENTER() DLOGD("Enter")
 #endif
 #ifndef LEAVE
-#define LEAVE() DLOGV("Leave")
+#define LEAVE() DLOGD("Leave")
 #endif
 #ifndef ENTERS
-#define ENTERS() DLOGS("Enter")
+#define ENTERS() DLOGD("Enter")
 #endif
 #ifndef LEAVES
-#define LEAVES() DLOGS("Leave")
+#define LEAVES() DLOGD("Leave")
 #endif
 
 // Optionally log very verbose data (>200 msgs/second) about the streaming process
