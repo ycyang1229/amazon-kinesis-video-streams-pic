@@ -1,6 +1,6 @@
 #include "Include_i.h"
 
-static volatile SIZE_T gLoggerLogLevel = LOG_LEVEL_VERBOSE;
+static volatile SIZE_T gLoggerLogLevel = LOG_LEVEL_WARN; //LOG_LEVEL_VERBOSE
 
 PCHAR getLogLevelStr(UINT32 loglevel)
 {
@@ -29,7 +29,7 @@ VOID addLogMetadata(PCHAR buffer, UINT32 bufferLen, PCHAR fmt, UINT32 logLevel)
     CHAR timeString[MAX_TIMESTAMP_FORMAT_STR_LEN + 1 + 1];
     STATUS retStatus = STATUS_SUCCESS;
     UINT32 offset = 0;
-#if 1
+#if 0
 #ifdef ENABLE_LOG_THREAD_ID
     // MAX_THREAD_ID_STR_LEN + null
     CHAR tidString[MAX_THREAD_ID_STR_LEN + 1];

@@ -238,7 +238,7 @@ CleanUp:
             DLOGW("pthread_attr_destroy failed with %u", result);
         }
     }
-    CHK_LOG_ERR(retStatus);
+    //CHK_LOG_ERR(retStatus);
 
     return retStatus;
 }

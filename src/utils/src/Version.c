@@ -143,7 +143,7 @@ STATUS defaultGetCompilerInfo(PCHAR pResult, UINT32 len)
 #elif defined(__GNUC__)
     requiredLen = SNPRINTF(pResult, len, (PCHAR) "%s/%s.%s.%s", (PCHAR) "GCC", (PCHAR) __xstr__(__GNUC__), (PCHAR) __xstr__(__GNUC_MINOR__), (PCHAR) __xstr__(__GNUC_PATCHLEVEL__));
 #else
-    requiredLen = SNPRINTF(pResult, len, (PCHAR) "%s", (PCHAR) "UnknownCompiler");
+    requiredLen = SNPRINTF(pResult, len, (PCHAR) "%s", (PCHAR) "iar/0.1");
 #endif
 #undef __str__
 #undef __xstr__
