@@ -43,7 +43,7 @@ struct __StateMachineImpl {
     StateMachine stateMachine;
 
     // Current time functionality
-    GetCurrentTimeFunc getCurrentTimeFunc;
+    GetCurrentTimeFunc getCurrentTimeFunc;//!< the callback of getting current time.
 
     // Custom data to be passed with the time function
     UINT64 getCurrentTimeFuncCustomData;

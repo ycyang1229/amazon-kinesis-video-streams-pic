@@ -181,37 +181,11 @@ PUBLIC_API STATUS defaultCreateThread(PTID pThreadId, startRoutine start, PVOID 
     result = pthread_attr_setstacksize(&attr, THREAD_STACK_SIZE_ON_CONSTRAINED_DEVICE);
     CHK_ERR(result == 0, STATUS_THREAD_ATTR_SET_STACK_SIZE_FAILED, "pthread_attr_setstacksize failed with %d", result);
 #endif
-#if 0
-    {
-        #include "esp_heap_caps.h"
-        #include "esp_system.h"
-        extern uint32_t esp_get_free_heap_size( void );
-        extern size_t heap_caps_get_free_size( uint32_t caps );
-        uint32_t totalSize = esp_get_free_heap_size();
-        uint32_t spiSize = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
-        uint32_t internalSize = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
-        uint32_t defaultSize = heap_caps_get_free_size(MALLOC_CAP_DEFAULT);
-        DLOGD("totalSize:%d, spiSize:%d, internalSize:%d, defaultSize:%d before pthread", totalSize, spiSize, internalSize, defaultSize);
-    }
-#endif
-    //usleep(2000);
+
     pthread_attr_setdetachstate(pAttr, PTHREAD_CREATE_DETACHED);
     pthread_attr_setstacksize(pAttr, 20*1024);
     result = pthread_create(&threadId, pAttr, start, args);
-#if 0
-    {
 
-        #include "esp_heap_caps.h"
-        #include "esp_system.h"
-        extern uint32_t esp_get_free_heap_size( void );
-        extern size_t heap_caps_get_free_size( uint32_t caps );
-        uint32_t totalSize = esp_get_free_heap_size();
-        uint32_t spiSize = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
-        uint32_t internalSize = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
-        uint32_t defaultSize = heap_caps_get_free_size(MALLOC_CAP_DEFAULT);
-        DLOGD("totalSize:%d, spiSize:%d, internalSize:%d, defaultSize:%d after pthread", totalSize, spiSize, internalSize, defaultSize);
-    }
-#endif
     switch (result) {
     case 0:
         // Successful case
@@ -238,10 +212,62 @@ CleanUp:
             DLOGW("pthread_attr_destroy failed with %u", result);
         }
     }
-    //CHK_LOG_ERR(retStatus);
+    CHK_LOG_ERR(retStatus);
 
     return retStatus;
 }
+
+
+PUBLIC_API STATUS defaultCreateThreadEx(PCHAR name, PTID pThreadId, startRoutine start, PVOID args, UINT32 priority, UINT32 stackSize)
+{
+    STATUS retStatus = STATUS_SUCCESS;
+    pthread_t threadId;
+    INT32 result;
+    pthread_attr_t *pAttr = NULL;
+    pthread_attr_t attr;
+    struct sched_param param;
+    pAttr = &attr;
+    CHK(pThreadId != NULL, STATUS_NULL_ARG);
+    result = pthread_attr_init(pAttr);
+    DLOGD("creating thread: %s", name);
+
+    pthread_attr_setdetachstate(pAttr, PTHREAD_CREATE_DETACHED);
+    pthread_attr_setstacksize(pAttr, stackSize);
+    param.sched_priority = priority;
+    //pthread_attr_setschedparam(pAttr, &param);
+    result = pthread_create(&threadId, pAttr, start, args);
+
+    switch (result) {
+    case 0:
+        // Successful case
+        break;
+    case EAGAIN:
+        CHK(FALSE, STATUS_THREAD_NOT_ENOUGH_RESOURCES);
+    case EINVAL:
+        CHK(FALSE, STATUS_THREAD_INVALID_ARG);
+    case EPERM:
+        CHK(FALSE, STATUS_THREAD_PERMISSIONS);
+    default:
+        // Generic error
+        CHK(FALSE, STATUS_CREATE_THREAD_FAILED);
+    }
+
+    *pThreadId = (TID)threadId;
+    successNum++;
+CleanUp:
+    totalNum++;
+    DLOGD("pthread_create(%d/%d)", successNum, totalNum);
+    if (pAttr != NULL) {
+        result = pthread_attr_destroy(pAttr);
+        if (result != 0) {
+            DLOGW("pthread_attr_destroy failed with %u", result);
+        }
+    }
+    CHK_LOG_ERR(retStatus);
+
+    return retStatus;
+}
+
 
 PUBLIC_API STATUS defaultJoinThread(TID threadId, PVOID* retVal)
 {
@@ -379,6 +405,7 @@ PUBLIC_API VOID defaultThreadSleepUntil(UINT64 time)
 getTId globalGetThreadId = defaultGetThreadId;
 getTName globalGetThreadName = defaultGetThreadName;
 createThread globalCreateThread = defaultCreateThread;
+createThreadEx globalCreateThreadEx = defaultCreateThreadEx;
 threadSleep globalThreadSleep = defaultThreadSleep;
 threadSleepUntil globalThreadSleepUntil = defaultThreadSleepUntil;
 joinThread globalJoinThread = defaultJoinThread;

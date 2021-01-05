@@ -80,16 +80,16 @@ extern logPrintFunc globalCustomLogPrintFn;
 #define DLOGV(fmt, ...) __LOG(LOG_LEVEL_VERBOSE, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
 #endif
 #ifndef ENTER
-#define ENTER() DLOGV("Enter")
+#define ENTER() //DLOGV("Enter")
 #endif
 #ifndef LEAVE
-#define LEAVE() DLOGV("Leave")
+#define LEAVE() //DLOGV("Leave")
 #endif
 #ifndef ENTERS
-#define ENTERS() DLOGS("Enter")
+#define ENTERS() //DLOGS("Enter")
 #endif
 #ifndef LEAVES
-#define LEAVES() DLOGS("Leave")
+#define LEAVES() //DLOGS("Leave")
 #endif
 
 // Optionally log very verbose data (>200 msgs/second) about the streaming process

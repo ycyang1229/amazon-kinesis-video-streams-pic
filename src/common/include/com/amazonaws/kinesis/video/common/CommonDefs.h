@@ -699,6 +699,7 @@ typedef VOID (*unlockMutex)(MUTEX);
 typedef BOOL (*tryLockMutex)(MUTEX);
 typedef VOID (*freeMutex)(MUTEX);
 typedef STATUS (*createThread)(PTID, startRoutine, PVOID);
+typedef STATUS (*createThreadEx)(PCHAR, PTID, startRoutine, PVOID, UINT32, UINT32);
 typedef STATUS (*joinThread)(TID, PVOID*);
 typedef VOID (*threadSleep)(UINT64);
 typedef VOID (*threadSleepUntil)(UINT64);
@@ -741,6 +742,7 @@ extern unlockMutex globalUnlockMutex;
 extern tryLockMutex globalTryLockMutex;
 extern freeMutex globalFreeMutex;
 extern createThread globalCreateThread;
+extern createThreadEx globalCreateThreadEx;
 extern joinThread globalJoinThread;
 extern threadSleep globalThreadSleep;
 extern threadSleepUntil globalThreadSleepUntil;
@@ -851,7 +853,9 @@ extern PUBLIC_API atomicXor globalAtomicXor;
 //
 // Environment variables
 //
-#define GETENV                     getenv
+//#define GETENV                     getenv
+#define GETENV(a)                     NULL
+
 
 //
 // Empty string definition
@@ -1003,6 +1007,7 @@ extern PUBLIC_API atomicXor globalAtomicXor;
 // Thread functionality
 //
 #define THREAD_CREATE                globalCreateThread
+#define THREAD_CREATE_EX             globalCreateThreadEx
 #define THREAD_JOIN                  globalJoinThread
 #define THREAD_SLEEP                 globalThreadSleep
 #define THREAD_SLEEP_UNTIL           globalThreadSleepUntil
@@ -1163,6 +1168,7 @@ typedef UINT64 HANDLE;
         STATUS __status = condition; \
         if (STATUS_FAILED(__status)) { \
             retStatus = (__status); \
+            DLOGD("%s(%d)", __func__, __LINE__); \
             goto CleanUp; \
         } \
     } while (FALSE)
@@ -1187,7 +1193,7 @@ typedef UINT64 HANDLE;
     do { \
         STATUS __status = condition; \
         if (STATUS_FAILED(__status)) { \
-            DLOGS("%s Returned status code: 0x%08x", logMessage, __status); \
+            DLOGS("%s(%d), %s Returned status code: 0x%08x", __func__, __LINE__, logMessage, __status); \
         } \
     } while (FALSE)
 
@@ -1195,7 +1201,7 @@ typedef UINT64 HANDLE;
     do { \
         STATUS __status = condition; \
         if (STATUS_FAILED(__status)) { \
-            DLOGE("operation returned status code: 0x%08x", __status); \
+            DLOGE("%s(%d), operation returned status code: 0x%08x", __func__, __LINE__, __status); \
         } \
     } while (FALSE)
 

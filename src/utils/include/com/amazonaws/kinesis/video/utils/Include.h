@@ -1127,6 +1127,7 @@ typedef STATUS (*TimerCallbackFunc)(UINT32, UINT64, UINT64);
  * @return  - STATUS code of the execution
  */
 PUBLIC_API STATUS timerQueueCreate(PTIMER_QUEUE_HANDLE);
+PUBLIC_API STATUS timerQueueCreateEx(PCHAR name, PTIMER_QUEUE_HANDLE pHandle);
 
 /*
  * Frees the Timer queue object

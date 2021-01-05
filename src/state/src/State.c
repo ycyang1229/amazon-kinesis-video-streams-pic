@@ -145,12 +145,14 @@ STATUS stepStateMachine(PStateMachine pStateMachine)
     customData = pStateMachineImpl->customData;
 
     // Get the next state
+    // execute the function of leaving the current state.
     CHK(pStateMachineImpl->context.pCurrentState->getNextStateFn != NULL, STATUS_NULL_ARG);
     CHK_STATUS(pStateMachineImpl->context.pCurrentState->getNextStateFn(pStateMachineImpl->customData, &nextState));
 
     // Validate if the next state can accept the current state before transitioning
+    // get the pointer of the context of the next state.
     CHK_STATUS(getStateMachineState(pStateMachine, nextState, &pState));
-
+    // check the transistion from current state to the next state is correct or not.
     CHK_STATUS(acceptStateMachineState((PStateMachine) pStateMachineImpl, pState->acceptStates));
 
     // Clear the iteration info if a different state and transition the state
@@ -174,10 +176,11 @@ STATUS stepStateMachine(PStateMachine pStateMachine)
             CHK(pStateMachineImpl->context.retryCount <= pState->retry, pState->status);
         }
     }
-
+    // change to the next state
     pStateMachineImpl->context.pCurrentState = pState;
 
     // Execute the state function if specified
+    // execute the function of the next state.
     if (pStateMachineImpl->context.pCurrentState->executeStateFn != NULL) {
         CHK_STATUS(pStateMachineImpl->context.pCurrentState->executeStateFn(pStateMachineImpl->customData,
                                                                             pStateMachineImpl->context.time));
