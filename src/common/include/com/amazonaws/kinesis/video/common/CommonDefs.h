@@ -851,7 +851,9 @@ extern PUBLIC_API atomicXor globalAtomicXor;
 //
 // Environment variables
 //
-#define GETENV                     getenv
+//#define GETENV                     getenv
+#define GETENV(a)                     NULL
+
 
 //
 // Empty string definition

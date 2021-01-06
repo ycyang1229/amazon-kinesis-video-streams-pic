@@ -275,7 +275,16 @@ CleanUp:
     LEAVES();
     return retStatus;
 }
-
+/*
+ * update timer id's period. Do nothing if timer not found.
+ *
+ * @param - TIMER_QUEUE_HANDLE - IN - Timer queue handle
+ * @param - UINT64 - IN - custom data to match
+ * @param - UINT32 - IN - Timer id to update
+ * @param - UINT32 - IN - new period
+ *
+ * @return - STATUS code of the execution
+ */
 STATUS timerQueueUpdateTimerPeriod(TIMER_QUEUE_HANDLE handle, UINT64 customData, UINT32 timerId, UINT64 period)
 {
     ENTERS();
@@ -340,15 +349,17 @@ STATUS timerQueueCreateInternal(UINT32 maxTimers, PTimerQueue* ppTimerQueue)
 
     CHK(ppTimerQueue != NULL, STATUS_NULL_ARG);
     CHK(maxTimers >= MIN_TIMER_QUEUE_TIMER_COUNT, STATUS_INVALID_TIMER_COUNT_VALUE);
-
+    // buffer allocation.
     allocSize = SIZEOF(TimerQueue) + maxTimers * SIZEOF(TimerEntry);
     CHK(NULL != (pTimerQueue = (PTimerQueue) MEMCALLOC(1, allocSize)), STATUS_NOT_ENOUGH_MEMORY);
+
     pTimerQueue->activeTimerCount = 0;
     pTimerQueue->maxTimerCount = maxTimers;
     pTimerQueue->executorTid = INVALID_TID_VALUE;
     ATOMIC_STORE_BOOL(&pTimerQueue->terminated, FALSE);
     ATOMIC_STORE_BOOL(&pTimerQueue->started , FALSE);
     ATOMIC_STORE_BOOL(&pTimerQueue->shutdown, FALSE);
+
     pTimerQueue->invokeTime = MAX_UINT64;
 
     pTimerQueue->startLock = MUTEX_CREATE(FALSE);

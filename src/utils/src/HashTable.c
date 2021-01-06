@@ -237,6 +237,7 @@ CleanUp:
 
 /**
  * Puts an item into the hash table
+ * #YC_TBD, no need to modularize this api.
  */
 STATUS hashTablePut(PHashTable pHashTable, UINT64 key, UINT64 value)
 {
@@ -257,6 +258,14 @@ CleanUp:
 
 /**
  * Upserts an item into the hash table
+ * @brief upadte existed element or insert new element into the hash table.
+ * 
+ * @param[in] pHashTable the context of hash table.
+ * @param[in] key
+ * @param[in] value
+ * 
+ * @return
+ * 
  */
 STATUS hashTableUpsert(PHashTable pHashTable, UINT64 key, UINT64 value)
 {

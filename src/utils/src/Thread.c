@@ -181,37 +181,11 @@ PUBLIC_API STATUS defaultCreateThread(PTID pThreadId, startRoutine start, PVOID 
     result = pthread_attr_setstacksize(&attr, THREAD_STACK_SIZE_ON_CONSTRAINED_DEVICE);
     CHK_ERR(result == 0, STATUS_THREAD_ATTR_SET_STACK_SIZE_FAILED, "pthread_attr_setstacksize failed with %d", result);
 #endif
-#if 0
-    {
-        #include "esp_heap_caps.h"
-        #include "esp_system.h"
-        extern uint32_t esp_get_free_heap_size( void );
-        extern size_t heap_caps_get_free_size( uint32_t caps );
-        uint32_t totalSize = esp_get_free_heap_size();
-        uint32_t spiSize = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
-        uint32_t internalSize = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
-        uint32_t defaultSize = heap_caps_get_free_size(MALLOC_CAP_DEFAULT);
-        DLOGD("totalSize:%d, spiSize:%d, internalSize:%d, defaultSize:%d before pthread", totalSize, spiSize, internalSize, defaultSize);
-    }
-#endif
-    //usleep(2000);
+
     pthread_attr_setdetachstate(pAttr, PTHREAD_CREATE_DETACHED);
     pthread_attr_setstacksize(pAttr, 20*1024);
     result = pthread_create(&threadId, pAttr, start, args);
-#if 0
-    {
 
-        #include "esp_heap_caps.h"
-        #include "esp_system.h"
-        extern uint32_t esp_get_free_heap_size( void );
-        extern size_t heap_caps_get_free_size( uint32_t caps );
-        uint32_t totalSize = esp_get_free_heap_size();
-        uint32_t spiSize = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
-        uint32_t internalSize = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
-        uint32_t defaultSize = heap_caps_get_free_size(MALLOC_CAP_DEFAULT);
-        DLOGD("totalSize:%d, spiSize:%d, internalSize:%d, defaultSize:%d after pthread", totalSize, spiSize, internalSize, defaultSize);
-    }
-#endif
     switch (result) {
     case 0:
         // Successful case
