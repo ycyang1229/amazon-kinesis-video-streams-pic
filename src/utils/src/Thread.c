@@ -217,6 +217,58 @@ CleanUp:
     return retStatus;
 }
 
+
+PUBLIC_API STATUS defaultCreateThreadEx(PCHAR name, PTID pThreadId, startRoutine start, PVOID args, UINT32 priority, UINT32 stackSize)
+{
+    STATUS retStatus = STATUS_SUCCESS;
+    pthread_t threadId;
+    INT32 result;
+    pthread_attr_t *pAttr = NULL;
+    pthread_attr_t attr;
+    struct sched_param param;
+    pAttr = &attr;
+    CHK(pThreadId != NULL, STATUS_NULL_ARG);
+    result = pthread_attr_init(pAttr);
+    DLOGD("creating thread: %s", name);
+
+    pthread_attr_setdetachstate(pAttr, PTHREAD_CREATE_DETACHED);
+    pthread_attr_setstacksize(pAttr, stackSize);
+    param.sched_priority = priority;
+    //pthread_attr_setschedparam(pAttr, &param);
+    result = pthread_create(&threadId, pAttr, start, args);
+
+    switch (result) {
+    case 0:
+        // Successful case
+        break;
+    case EAGAIN:
+        CHK(FALSE, STATUS_THREAD_NOT_ENOUGH_RESOURCES);
+    case EINVAL:
+        CHK(FALSE, STATUS_THREAD_INVALID_ARG);
+    case EPERM:
+        CHK(FALSE, STATUS_THREAD_PERMISSIONS);
+    default:
+        // Generic error
+        CHK(FALSE, STATUS_CREATE_THREAD_FAILED);
+    }
+
+    *pThreadId = (TID)threadId;
+    successNum++;
+CleanUp:
+    totalNum++;
+    DLOGD("pthread_create(%d/%d)", successNum, totalNum);
+    if (pAttr != NULL) {
+        result = pthread_attr_destroy(pAttr);
+        if (result != 0) {
+            DLOGW("pthread_attr_destroy failed with %u", result);
+        }
+    }
+    CHK_LOG_ERR(retStatus);
+
+    return retStatus;
+}
+
+
 PUBLIC_API STATUS defaultJoinThread(TID threadId, PVOID* retVal)
 {
     STATUS retStatus = STATUS_SUCCESS;
@@ -353,6 +405,7 @@ PUBLIC_API VOID defaultThreadSleepUntil(UINT64 time)
 getTId globalGetThreadId = defaultGetThreadId;
 getTName globalGetThreadName = defaultGetThreadName;
 createThread globalCreateThread = defaultCreateThread;
+createThreadEx globalCreateThreadEx = defaultCreateThreadEx;
 threadSleep globalThreadSleep = defaultThreadSleep;
 threadSleepUntil globalThreadSleepUntil = defaultThreadSleepUntil;
 joinThread globalJoinThread = defaultJoinThread;

@@ -699,6 +699,7 @@ typedef VOID (*unlockMutex)(MUTEX);
 typedef BOOL (*tryLockMutex)(MUTEX);
 typedef VOID (*freeMutex)(MUTEX);
 typedef STATUS (*createThread)(PTID, startRoutine, PVOID);
+typedef STATUS (*createThreadEx)(PCHAR, PTID, startRoutine, PVOID, UINT32, UINT32);
 typedef STATUS (*joinThread)(TID, PVOID*);
 typedef VOID (*threadSleep)(UINT64);
 typedef VOID (*threadSleepUntil)(UINT64);
@@ -741,6 +742,7 @@ extern unlockMutex globalUnlockMutex;
 extern tryLockMutex globalTryLockMutex;
 extern freeMutex globalFreeMutex;
 extern createThread globalCreateThread;
+extern createThreadEx globalCreateThreadEx;
 extern joinThread globalJoinThread;
 extern threadSleep globalThreadSleep;
 extern threadSleepUntil globalThreadSleepUntil;
@@ -1005,6 +1007,7 @@ extern PUBLIC_API atomicXor globalAtomicXor;
 // Thread functionality
 //
 #define THREAD_CREATE                globalCreateThread
+#define THREAD_CREATE_EX             globalCreateThreadEx
 #define THREAD_JOIN                  globalJoinThread
 #define THREAD_SLEEP                 globalThreadSleep
 #define THREAD_SLEEP_UNTIL           globalThreadSleepUntil

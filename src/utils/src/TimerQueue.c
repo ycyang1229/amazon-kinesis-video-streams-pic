@@ -25,6 +25,12 @@ CleanUp:
     return retStatus;
 }
 
+STATUS timerQueueCreateEx(PCHAR name, PTIMER_QUEUE_HANDLE pHandle)
+{
+    DLOGD("timer: %s", name);
+    return timerQueueCreate(pHandle);
+}
+
 /**
  * Frees and de-allocates the hash table
  */
@@ -386,7 +392,8 @@ STATUS timerQueueCreateInternal(UINT32 maxTimers, PTimerQueue* ppTimerQueue)
     locked = TRUE;
 
     // Create the executor thread
-    CHK_STATUS(THREAD_CREATE(&threadId, timerQueueExecutor, (PVOID) pTimerQueue));
+    CHK_STATUS(THREAD_CREATE_EX("timer", &threadId, timerQueueExecutor, (PVOID) pTimerQueue, 1, 20*1024));
+    
     CHK_STATUS(THREAD_DETACH(threadId));
 
     pTimerQueue->executorTid = threadId;
