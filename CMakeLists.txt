@@ -21,6 +21,11 @@ option(FIXUP_ANNEX_B_TRAILING_NALU_ZERO "Fix-up some bad encoder behavior leavin
 option(BUILD_KVSPIC "Build the sample code." OFF)
 option(BUILD_KVSPIC_CLIENT "Build the sample code." OFF)
 
+option(KVS_PLAT_ESP_FREERTOS "Build for ESP FreeRTOS" OFF)
+
+if(KVS_PLAT_ESP_FREERTOS)
+  add_definitions(-DKVS_PLAT_ESP_FREERTOS)
+endif()
 
 CHECK_INCLUDE_FILES(sys/prctl.h   KVSPIC_HAVE_SYS_PRCTL_H)
 if(KVSPIC_HAVE_SYS_PRCTL_H)
