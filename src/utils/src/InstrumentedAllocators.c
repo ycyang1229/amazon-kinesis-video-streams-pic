@@ -100,7 +100,7 @@ SIZE_T getInstrumentedTotalAllocationSize()
 // Internal functionality
 ////////////////////////////////////////////////////////////////////////////////
 
-PVOID instrumentedAllocatorsMemAlloc(SIZE_T size)
+PVOID instrumentedAllocatorsMemAlloc(SIZE_T size, PCHAR fmt, ...)
 {
     DLOGS("Instrumented mem alloc %" PRIu64 " bytes", (UINT64) size);
     PSIZE_T pAlloc = (PSIZE_T) gInstrumentedAllocatorsStoredMemAlloc(size + SIZEOF(SIZE_T));

@@ -593,7 +593,7 @@ typedef struct stat STAT_STRUCT;
 //
 // Allocator function definitions
 //
-typedef PVOID (*memAlloc)(SIZE_T size);
+typedef PVOID (*memAlloc)(SIZE_T size, PCHAR fmt, ...);
 typedef PVOID (*memAlignAlloc)(SIZE_T size, SIZE_T alignment);
 typedef PVOID (*memCalloc)(SIZE_T num, SIZE_T size);
 typedef PVOID (*memRealloc)(PVOID ptr, SIZE_T size);
@@ -604,7 +604,7 @@ typedef BOOL (*memChk)(PVOID ptr, BYTE val, SIZE_T size);
 //
 // Default allocator functions
 //
-INLINE PVOID defaultMemAlloc(SIZE_T size);
+INLINE PVOID defaultMemAlloc(SIZE_T size, PCHAR fmt, ...);
 INLINE PVOID defaultMemAlignAlloc(SIZE_T size, SIZE_T alignment);
 INLINE PVOID defaultMemCalloc(SIZE_T num, SIZE_T size);
 INLINE PVOID defaultMemRealloc(PVOID ptr, SIZE_T size);
@@ -781,7 +781,7 @@ extern PUBLIC_API atomicXor globalAtomicXor;
 //
 // Memory allocation and operations
 //
-#define MEMALLOC                   globalMemAlloc
+#define MEMALLOC(size, LOG_CLASS)  globalMemAlloc(size, LOG_CLASS)
 #define MEMALIGNALLOC              globalMemAlignAlloc
 #define MEMCALLOC                  globalMemCalloc
 #define MEMREALLOC                 globalMemRealloc

@@ -3,8 +3,19 @@
 //
 // Default allocator functions
 //
-PVOID defaultMemAlloc(SIZE_T size)
+PVOID defaultMemAlloc(SIZE_T size, PCHAR fmt, ...)
 {
+    DLOGD("mem");
+    if(fmt!=NULL){
+        va_list valist;
+        va_start(valist, fmt);
+    
+        DLOGD("fmt:%s", fmt);
+        va_end(valist);
+    }
+    
+    
+
     return malloc(size);
 }
 
