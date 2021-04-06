@@ -3,23 +3,12 @@
 //
 // Default allocator functions
 //
-PVOID defaultMemAlloc(SIZE_T size, PCHAR fmt, ...)
+PVOID defaultMemAlloc(SIZE_T size, PCHAR fmt)
 {
-    DLOGD("mem");
-    if(fmt!=NULL){
-        va_list valist;
-        va_start(valist, fmt);
-    
-        DLOGD("fmt:%s", fmt);
-        va_end(valist);
-    }
-    
-    
-
     return malloc(size);
 }
 
-PVOID defaultMemAlignAlloc(SIZE_T size, SIZE_T alignment)
+PVOID defaultMemAlignAlloc(SIZE_T size, SIZE_T alignment, PCHAR fmt)
 {
 #if defined (__MACH__)
     // On Mac allocations are 16 byte aligned. There is hardly an equivalent anyway
@@ -32,7 +21,7 @@ PVOID defaultMemAlignAlloc(SIZE_T size, SIZE_T alignment)
 #endif
 }
 
-PVOID defaultMemCalloc(SIZE_T num, SIZE_T size)
+PVOID defaultMemCalloc(SIZE_T num, SIZE_T size, PCHAR fmt)
 {
     return calloc(num, size);
 }

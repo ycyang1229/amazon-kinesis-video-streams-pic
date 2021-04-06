@@ -1518,7 +1518,7 @@ CleanUp:
     return retStatus;
 }
 
-PVOID contentStoreMemAlloc(SIZE_T size, PCHAR fmt, ...)
+PVOID contentStoreMemAlloc(SIZE_T size, PCHAR fmt)
 {
     ENTERS();
     STATUS retStatus = STATUS_SUCCESS;

@@ -216,7 +216,7 @@ STATUS semaphoreWaitUntilClearInternal(PSemaphore, UINT64);
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Instrumented allocators functionality
 //////////////////////////////////////////////////////////////////////////////////////////////
-PVOID instrumentedAllocatorsMemAlloc(SIZE_T);
+PVOID instrumentedAllocatorsMemAlloc(SIZE_T, PCHAR fmt);
 PVOID instrumentedAllocatorsMemAlignAlloc(SIZE_T, SIZE_T);
 PVOID instrumentedAllocatorsMemCalloc(SIZE_T, SIZE_T);
 PVOID instrumentedAllocatorsMemRealloc(PVOID, SIZE_T);

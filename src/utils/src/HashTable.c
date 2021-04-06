@@ -1,5 +1,5 @@
 #include "Include_i.h"
-
+#define LOG_CLASS "HashTable"
 /**
  * Create a new hash table with default parameters
  */

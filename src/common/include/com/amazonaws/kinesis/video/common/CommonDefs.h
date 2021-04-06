@@ -593,10 +593,10 @@ typedef struct stat STAT_STRUCT;
 //
 // Allocator function definitions
 //
-typedef PVOID (*memAlloc)(SIZE_T size, PCHAR fmt, ...);
-typedef PVOID (*memAlignAlloc)(SIZE_T size, SIZE_T alignment);
-typedef PVOID (*memCalloc)(SIZE_T num, SIZE_T size);
-typedef PVOID (*memRealloc)(PVOID ptr, SIZE_T size);
+typedef PVOID (*memAlloc)(SIZE_T size, PCHAR fmt);
+typedef PVOID (*memAlignAlloc)(SIZE_T size, SIZE_T alignment, PCHAR fmt);
+typedef PVOID (*memCalloc)(SIZE_T num, SIZE_T size, PCHAR fmt);
+typedef PVOID (*memRealloc)(PVOID ptr, SIZE_T size, PCHAR fmt);
 typedef VOID (*memFree)(PVOID ptr);
 
 typedef BOOL (*memChk)(PVOID ptr, BYTE val, SIZE_T size);
@@ -604,9 +604,9 @@ typedef BOOL (*memChk)(PVOID ptr, BYTE val, SIZE_T size);
 //
 // Default allocator functions
 //
-INLINE PVOID defaultMemAlloc(SIZE_T size, PCHAR fmt, ...);
-INLINE PVOID defaultMemAlignAlloc(SIZE_T size, SIZE_T alignment);
-INLINE PVOID defaultMemCalloc(SIZE_T num, SIZE_T size);
+INLINE PVOID defaultMemAlloc(SIZE_T size, PCHAR fmt);
+INLINE PVOID defaultMemAlignAlloc(SIZE_T size, SIZE_T alignment, PCHAR fmt);
+INLINE PVOID defaultMemCalloc(SIZE_T num, SIZE_T size, PCHAR fmt);
 INLINE PVOID defaultMemRealloc(PVOID ptr, SIZE_T size);
 INLINE VOID defaultMemFree(VOID* ptr);
 
@@ -781,10 +781,10 @@ extern PUBLIC_API atomicXor globalAtomicXor;
 //
 // Memory allocation and operations
 //
-#define MEMALLOC(size, LOG_CLASS)  globalMemAlloc(size, LOG_CLASS)
-#define MEMALIGNALLOC              globalMemAlignAlloc
-#define MEMCALLOC                  globalMemCalloc
-#define MEMREALLOC                 globalMemRealloc
+#define MEMALLOC(size)                 globalMemAlloc(size, LOG_CLASS)
+#define MEMALIGNALLOC(size, alignment) globalMemAlignAlloc(size, alignment, LOG_CLASS);
+#define MEMCALLOC(num, size)           globalMemCalloc(num, size, LOG_CLASS)
+#define MEMREALLOC(ptr, size)          globalMemRealloc(ptr, size, LOG_CLASS)
 #define MEMFREE                    globalMemFree
 #define MEMCMP                     memcmp
 #ifndef MEMCPY

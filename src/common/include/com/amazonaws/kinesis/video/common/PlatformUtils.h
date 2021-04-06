@@ -59,21 +59,41 @@ extern logPrintFunc globalCustomLogPrintFn;
 #define MAX_LOG_LEVEL_STRLEN            7
 
 // Extra logging macros
+#define LOG_HEADER 1
 #ifndef DLOGE
-//#define DLOGE(fmt, ...) __LOG(LOG_LEVEL_ERROR, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+#if (LOG_HEADER == 1)
+#define DLOGE(fmt, ...) __LOG(LOG_LEVEL_ERROR, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+#else
 #define DLOGE(fmt, ...) __LOG(LOG_LEVEL_ERROR, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
 #endif
+#endif
 #ifndef DLOGW
+#if (LOG_HEADER == 1)
+#define DLOGW(fmt, ...) __LOG(LOG_LEVEL_WARN, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+#else
 #define DLOGW(fmt, ...) __LOG(LOG_LEVEL_WARN, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
 #endif
+#endif
 #ifndef DLOGI
+#if (LOG_HEADER == 1)
+#define DLOGI(fmt, ...) __LOG(LOG_LEVEL_INFO, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+#else
 #define DLOGI(fmt, ...) __LOG(LOG_LEVEL_INFO, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
 #endif
+#endif
 #ifndef DLOGD
+#if (LOG_HEADER == 1)
+#define DLOGD(fmt, ...) __LOG(LOG_LEVEL_DEBUG, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+#else
 #define DLOGD(fmt, ...) __LOG(LOG_LEVEL_DEBUG, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
 #endif
+#endif
 #ifndef DLOGV
+#if (LOG_HEADER == 1)
+#define DLOGV(fmt, ...) __LOG(LOG_LEVEL_VERBOSE, (PCHAR) LOG_CLASS, (PCHAR) "%s(): " fmt, __FUNCTION__, ##__VA_ARGS__)
+#else
 #define DLOGV(fmt, ...) __LOG(LOG_LEVEL_VERBOSE, (PCHAR) LOG_CLASS, (PCHAR)fmt, ##__VA_ARGS__)
+#endif
 #endif
 #ifndef ENTER
 #define ENTER() DLOGV("Enter")

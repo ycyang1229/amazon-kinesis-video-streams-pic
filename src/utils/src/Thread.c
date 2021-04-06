@@ -1,4 +1,5 @@
 #include "Include_i.h"
+#define LOG_CLASS "Thread"
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 
@@ -195,7 +196,7 @@ PUBLIC_API STATUS defaultCreateThread(PTID pThreadId, startRoutine start, PVOID 
     }
 #endif
     //usleep(2000);
-    pthread_attr_setdetachstate(pAttr, PTHREAD_CREATE_DETACHED);
+    //pthread_attr_setdetachstate(pAttr, PTHREAD_CREATE_DETACHED);
     //pthread_attr_setstacksize(pAttr, 15360);
     result = pthread_create(&threadId, pAttr, start, args);
 #if defined(KVS_PLAT_ESP_FREERTOS)

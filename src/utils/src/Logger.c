@@ -1,5 +1,5 @@
 #include "Include_i.h"
-
+#define LOG_CLASS "Logger"
 static volatile SIZE_T gLoggerLogLevel = LOG_LEVEL_WARN;
 
 PCHAR getLogLevelStr(UINT32 loglevel)

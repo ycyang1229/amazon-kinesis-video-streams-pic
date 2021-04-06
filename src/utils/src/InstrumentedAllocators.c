@@ -100,10 +100,10 @@ SIZE_T getInstrumentedTotalAllocationSize()
 // Internal functionality
 ////////////////////////////////////////////////////////////////////////////////
 
-PVOID instrumentedAllocatorsMemAlloc(SIZE_T size, PCHAR fmt, ...)
+PVOID instrumentedAllocatorsMemAlloc(SIZE_T size, PCHAR fmt)
 {
     DLOGS("Instrumented mem alloc %" PRIu64 " bytes", (UINT64) size);
-    PSIZE_T pAlloc = (PSIZE_T) gInstrumentedAllocatorsStoredMemAlloc(size + SIZEOF(SIZE_T));
+    PSIZE_T pAlloc = (PSIZE_T) gInstrumentedAllocatorsStoredMemAlloc(size + SIZEOF(SIZE_T), NULL);
 
     if (pAlloc == NULL) {
         return NULL;
@@ -123,7 +123,7 @@ PVOID instrumentedAllocatorsMemAlignAlloc(SIZE_T size, SIZE_T alignment)
     // Doing the same as alloc
     DLOGS("Instrumented mem alignalloc %" PRIu64 " bytes", (UINT64) size);
     UNUSED_PARAM(alignment);
-    return instrumentedAllocatorsMemAlloc(size);
+    return instrumentedAllocatorsMemAlloc(size, NULL);
 }
 
 PVOID instrumentedAllocatorsMemCalloc(SIZE_T num, SIZE_T size)
@@ -132,7 +132,7 @@ PVOID instrumentedAllocatorsMemCalloc(SIZE_T num, SIZE_T size)
     DLOGS("Instrumented mem calloc %" PRIu64 " bytes", (UINT64) overallSize);
 
     // Allocate extra size_t to store the size of the allocation
-    PSIZE_T pAlloc = (PSIZE_T) gInstrumentedAllocatorsStoredMemCalloc(1, overallSize + SIZEOF(SIZE_T));
+    PSIZE_T pAlloc = (PSIZE_T) gInstrumentedAllocatorsStoredMemCalloc(1, overallSize + SIZEOF(SIZE_T), NULL);
     if (pAlloc == NULL) {
         return NULL;
     }
@@ -148,7 +148,7 @@ PVOID instrumentedAllocatorsMemRealloc(PVOID ptr, SIZE_T size)
 {
     if (ptr == NULL) {
         // Realloc called with NULL ptr is equivalent to malloc
-        return instrumentedAllocatorsMemAlloc(size);
+        return instrumentedAllocatorsMemAlloc(size, NULL);
     }
 
     PSIZE_T pAlloc = (PSIZE_T) ptr - 1;
@@ -160,7 +160,7 @@ PVOID instrumentedAllocatorsMemRealloc(PVOID ptr, SIZE_T size)
         return ptr;
     }
 
-    PSIZE_T pNewAlloc = (PSIZE_T) gInstrumentedAllocatorsStoredMemRealloc(pAlloc, size + SIZEOF(SIZE_T));
+    PSIZE_T pNewAlloc = (PSIZE_T) gInstrumentedAllocatorsStoredMemRealloc(pAlloc, size + SIZEOF(SIZE_T), NULL);
     if (pNewAlloc == NULL) {
         return NULL;
     }
