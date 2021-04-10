@@ -52,6 +52,8 @@ BYTE BASE64_DECODE_PADDING[4] = {0, 0xff, 2, 1};
  * Base64 encodes the data. Calling the function with NULL pOutputData will calculate the output buffer size only
  * The function will NULL-terminate the returned encoded string and count the size including the terminator.
  */
+// #YC_TBD, replace this with mbedtls lib.
+// mbedtls_base64_encode
 PUBLIC_API STATUS base64Encode(PVOID pInputData, UINT32 inputLength, PCHAR pOutputData, PUINT32 pOutputLength)
 {
     UINT32 mod3;
